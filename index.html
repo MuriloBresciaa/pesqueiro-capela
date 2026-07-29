@@ -5,10 +5,10 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Pesqueiro Capela - Sem Frescura</title>
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+    <link rel="manifest" href="assets/icons/site.webmanifest">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Noto+Serif:wght@700&display=swap" rel="stylesheet"/>
@@ -63,7 +63,7 @@ src="https://www.facebook.com/tr?id=1638492227474013&ev=PageView&noscript=1"
 <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-emerald-100">
     <div class="flex justify-between items-center max-w-7xl mx-auto px-4 py-3">
         <div class="flex items-center gap-3">
-            <img src="logo.jpeg" alt="Logo" class="h-12 w-12 rounded-full border-2 border-primary">
+            <img src="assets/img/logo.jpeg" alt="Logo" class="h-12 w-12 rounded-full border-2 border-primary">
             <span class="text-xl md:text-2xl font-headline font-bold text-primary tracking-tight">Pesqueiro Capela</span>
         </div>
         <div class="hidden lg:flex gap-6 font-bold text-primary">
@@ -169,7 +169,7 @@ src="https://www.facebook.com/tr?id=1638492227474013&ev=PageView&noscript=1"
 </div>
 
 <section id="inicio" class="relative h-[90vh] flex items-center justify-center pt-16">
-    <img src="index.jpg" class="absolute inset-0 w-full h-full object-cover" alt="Pesqueiro Capela">
+    <img src="assets/img/index.jpg" class="absolute inset-0 w-full h-full object-cover" alt="Pesqueiro Capela">
     <div class="absolute inset-0 hero-gradient"></div>
     <div class="relative z-10 text-center px-4 max-w-4xl">
         <h1 class="text-4xl md:text-6xl font-headline text-white mb-6 leading-tight">
@@ -206,21 +206,21 @@ src="https://www.facebook.com/tr?id=1638492227474013&ev=PageView&noscript=1"
 
         <div x-show="tab === 'espaco'" x-cloak class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="rounded-xl overflow-hidden shadow-lg group border border-slate-100">
-                <img src="deck.jpg" class="w-full h-64 object-cover group-hover:scale-105 transition-transform" alt="Nosso Deck">
+                <img src="assets/img/deck.jpg" class="w-full h-64 object-cover group-hover:scale-105 transition-transform" alt="Nosso Deck">
                 <div class="p-5 bg-white">
                     <p class="font-bold text-xl text-primary mb-1">Deck de Pesca</p>
                     <p class="text-sm font-bold text-secondary bg-orange-50 inline-block px-2 py-1 rounded border border-orange-100">Espaço para churrasqueira - R$ 200</p>
                 </div>
             </div>
             <div class="rounded-xl overflow-hidden shadow-lg group border border-slate-100">
-                <img src="aconchegante.jpg" class="w-full h-64 object-cover group-hover:scale-105 transition-transform" alt="Ambiente">
+                <img src="assets/img/aconchegante.jpg" class="w-full h-64 object-cover group-hover:scale-105 transition-transform" alt="Ambiente">
                 <div class="p-5 bg-white">
                     <p class="font-bold text-xl text-primary mb-1">Ambiente Familiar</p>
                     <p class="text-sm font-bold text-secondary bg-orange-50 inline-block px-2 py-1 rounded border border-orange-100">Espaço para churrasqueira - R$ 200</p>
                 </div>
             </div>
             <div class="rounded-xl overflow-hidden shadow-lg group border border-slate-100">
-                <img src="estacionamento.jpg" class="w-full h-64 object-cover group-hover:scale-105 transition-transform" alt="Estacionamento">
+                <img src="assets/img/estacionamento.jpg" class="w-full h-64 object-cover group-hover:scale-105 transition-transform" alt="Estacionamento">
                 <div class="p-5 bg-white">
                     <p class="font-bold text-xl text-primary mb-1">Estacionamento Amplo</p>
                     <p class="text-sm text-slate-500 font-medium">Segurança e comodidade</p>
@@ -234,8 +234,8 @@ src="https://www.facebook.com/tr?id=1638492227474013&ev=PageView&noscript=1"
                 <p class="text-lg text-slate-700">Nada de pratos elaborados demais. Aqui o tempero é caseiro, o peixe é fresco e a porção é farta.</p>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <img src="cardapio1.jpg" class="rounded-lg shadow-md border object-cover w-full" alt="Cardápio 1">
-                <img src="cardapio2.jpg" class="rounded-lg shadow-md border object-cover w-full" alt="Cardápio 2">
+                <img src="assets/img/cardapio1.jpg" class="rounded-lg shadow-md border object-cover w-full" alt="Cardápio 1">
+                <img src="assets/img/cardapio2.jpg" class="rounded-lg shadow-md border object-cover w-full" alt="Cardápio 2">
             </div>
         </div>
 
@@ -693,7 +693,7 @@ async function gerarPix() {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Gerando PIX...';
 
     try {
-        const response = await fetch('./gerar_pix.php', {
+        const response = await fetch('./api/gerar_pix.php', {
             method:  'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

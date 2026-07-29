@@ -45,13 +45,29 @@ O **Pesqueiro Capela** é um projeto desenvolvido para atender às demandas de p
 
 ```text
 pesqueiro-capela/
-├── index.html (ou index.php)
+├── api/
+│   └── gerar_pix.php
 ├── assets/
-│   ├── css/
-│   ├── js/
+│   ├── icons/
+│   │   ├── android-chrome-192x192.png
+│   │   ├── android-chrome-512x512.png
+│   │   ├── apple-touch-icon.png
+│   │   ├── favicon-16x16.png
+│   │   ├── favicon-32x32.png
+│   │   ├── favicon.ico
+│   │   └── site.webmanifest
 │   └── img/
+│       ├── aconchegante.jpg
+│       ├── cardapio1.jpg
+│       ├── cardapio2.jpg
+│       ├── deck.jpg
+│       ├── estacionamento.jpg
+│       ├── index.jpg
+│       └── logo.jpeg
+├── index.html
 ├── .env.example
 ├── .gitignore
+├── ESTADO.md
 └── README.md
 ```
 
