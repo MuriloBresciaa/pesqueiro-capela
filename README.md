@@ -23,8 +23,9 @@ O **Pesqueiro Capela** é um projeto desenvolvido para atender às demandas de p
 
 <hr />
 
-## Diferenciais Técnicos e Arquitetura
+## Diferenciais Técnicos e Funcionalidades
 
+- **Módulo Backend de Pagamento Instantâneo (PIX):** Endpoint em PHP (`api/gerar_pix.php`) integrado via API com gateway de pagamento (Mercado Pago), com isolamento de credenciais e segurança via variáveis de ambiente.
 - **Zero Overhead / High Speed:** Desenvolvido sem dependência de frameworks pesados, garantindo pontuação máxima em métricas do Google PageSpeed e tempo de resposta mínimo.
 - **Design Responsivo:** Layout adaptável para dispositivos móveis, tablets e desktops com foco na usabilidade da interface de usuário (UI/UX).
 - **SEO Otimizado:** Marcação semântica, meta tags estruturadas e integração Open Graph para compartilhamento em redes sociais.
@@ -34,10 +35,15 @@ O **Pesqueiro Capela** é um projeto desenvolvido para atender às demandas de p
 
 ## Stack Tecnológica
 
-- **Frontend:** HTML5 Semântico, CSS3 Moderno, JavaScript
-- **Backend / Infraestrutura:** PHP, Servidor Apache, DNS & SSL nativos
-- **Banco de Dados / Persistência:** MySQL
-- **Versionamento:** Git
+<div align="center">
+  <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP" />
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
+  <img src="https://img.shields.io/badge/Apache-D22128?style=for-the-badge&logo=apache&logoColor=white" alt="Apache" />
+  <img src="https://img.shields.io/badge/Git-E34F26?style=for-the-badge&logo=git&logoColor=white" alt="Git" />
+</div>
 
 <hr />
 
@@ -69,25 +75,3 @@ pesqueiro-capela/
 ├── .gitignore
 ├── ESTADO.md
 └── README.md
-```
-
-## Configuração do Ambiente Local
-
-### Pré-requisitos
-- Servidor web local (Laragon, XAMPP ou PHP Built-in Server)
-- Git instalado
-
-### Instruções
-1. Clonar o repositório:
-```bash
-git clone https://github.com/MuriloBresciaa/pesqueiro-capela.git
-```
-2. Acessar o diretório do projeto:
-```bash
-cd pesqueiro-capela
-```
-3. Executar via PHP local (caso aplicável):
-```bash
-php -S localhost:8000
-```
-4. Abrir http://localhost:8000 no navegador.
