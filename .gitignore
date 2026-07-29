@@ -1,0 +1,20 @@
+# Ambiente e Credenciais
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Arquivos de Sistema Operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs e Editores
+.idea/
+.vscode/
+
+# Dependências
+vendor/
+node_modules/

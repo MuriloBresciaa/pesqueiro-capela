@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Pesqueiro Capela - Sem Frescura</title>
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Noto+Serif:wght@700&display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#166534",
+                        "secondary": "#ea580c",
+                        "background": "#f8fafc",
+                        "surface": "#ffffff"
+                    },
+                    fontFamily: {
+                        "headline": ["Noto Serif", "serif"],
+                        "body": ["Manrope", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Manrope', sans-serif; scroll-behavior: smooth; }
+        .hero-gradient { background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(22, 101, 52, 0.6) 100%); }
+        [x-cloak] { display: none !important; }
+    </style>
+    <!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1638492227474013');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1638492227474013&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+</head>
+<body class="bg-background text-slate-900 antialiased" x-data="checkoutState">
+
+<nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-emerald-100">
+    <div class="flex justify-between items-center max-w-7xl mx-auto px-4 py-3">
+        <div class="flex items-center gap-3">
+            <img src="logo.jpeg" alt="Logo" class="h-12 w-12 rounded-full border-2 border-primary">
+            <span class="text-xl md:text-2xl font-headline font-bold text-primary tracking-tight">Pesqueiro Capela</span>
+        </div>
+        <div class="hidden lg:flex gap-6 font-bold text-primary">
+            <a href="#inicio" class="hover:text-secondary transition-colors">Início</a>
+            <a href="#espaco" class="hover:text-secondary transition-colors">Nosso Espaço</a>
+            <a href="#precos" class="hover:text-secondary transition-colors">Pesca</a>
+            <a href="#cardapio" class="hover:text-secondary transition-colors">Cardápio</a>
+        </div>
+        <a href="https://wa.me/5519992655756" class="bg-secondary text-white px-4 py-2 rounded-md font-bold flex items-center gap-2 text-sm md:text-base hover:bg-orange-700 transition-colors">
+            <i class="fa-brands fa-whatsapp text-lg"></i> <span class="hidden sm:inline">RESERVAR</span>
+        </a>
+    </div>
+</nav>
+
+<div x-show="checkout.open"
+     x-cloak
+     class="fixed inset-0 z-[200] flex items-center justify-center p-4"
+     style="background:rgba(0,0,0,0.75);"
+     @keydown.escape.window="checkout.open = false">
+
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md relative overflow-hidden"
+         @click.outside="checkout.open = false">
+
+        <div class="bg-primary px-6 py-5 flex items-center justify-between">
+            <div>
+                <p class="text-emerald-200 text-xs font-bold uppercase tracking-widest mb-1" x-text="checkout.title"></p>
+                <h2 class="text-white text-xl font-headline font-bold">Garantir Ingresso via PIX</h2>
+            </div>
+            <button @click="checkout.open = false"
+                    class="text-white/60 hover:text-white transition-colors ml-4 flex-shrink-0"
+                    aria-label="Fechar">
+                <i class="fa-solid fa-xmark text-2xl"></i>
+            </button>
+        </div>
+
+        <div id="pix-form-area" class="px-6 py-6">
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-6 text-center">
+                <p class="text-sm text-slate-600 font-medium" x-text="checkout.title"></p>
+                <p class="text-4xl font-black text-primary mt-1">R$ <span x-text="checkout.price.toFixed(2).replace('.', ',')"></span></p>
+                <p class="text-xs text-slate-500 mt-1" x-show="checkout.description.includes('Entrada')">
+                    + R$ 25,00/kg do peixe pescado pago no local
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label for="pix-nome" class="block text-sm font-bold text-slate-700 mb-1">Nome completo</label>
+                    <input type="text" id="pix-nome" placeholder="Seu nome completo"
+                           autocomplete="name"
+                           class="w-full border-2 border-slate-200 rounded-lg px-4 py-3 text-slate-800 focus:outline-none focus:border-primary transition-colors font-medium" required>
+                </div>
+                <div>
+                    <label for="pix-phone" class="block text-sm font-bold text-slate-700 mb-1">WhatsApp / Telefone</label>
+                    <input type="tel" id="pix-phone" placeholder="(19) 99999-9999"
+                           autocomplete="tel"
+                           class="w-full border-2 border-slate-200 rounded-lg px-4 py-3 text-slate-800 focus:outline-none focus:border-primary transition-colors font-medium" required>
+                </div>
+                <div>
+                    <label for="pix-cpf" class="block text-sm font-bold text-slate-700 mb-1">CPF somente números</label>
+                    <input type="text" id="pix-cpf" placeholder="00000000000" maxlength="11"
+                           autocomplete="off" inputmode="numeric"
+                           class="w-full border-2 border-slate-200 rounded-lg px-4 py-3 text-slate-800 focus:outline-none focus:border-primary transition-colors font-medium" required>
+                </div>
+            </div>
+
+            <!-- Checkbox LGPD -->
+            <div class="mt-4">
+                <label for="lgpd_consent" class="flex items-start gap-3 cursor-pointer group">
+                    <input type="checkbox" id="lgpd_consent" required
+                           class="mt-1 h-5 w-5 rounded border-2 border-slate-300 text-primary focus:ring-primary flex-shrink-0">
+                    <span class="text-xs text-slate-500 leading-relaxed group-hover:text-slate-700 transition-colors">
+                        Concordo com o armazenamento do meu CPF e Nome estritamente para controle de acesso na portaria do evento, conforme a LGPD.
+                    </span>
+                </label>
+            </div>
+
+            <button onclick="gerarPix()" id="btn-gerar-pix"
+                    class="w-full mt-6 bg-primary text-white py-4 rounded-xl font-black text-lg flex items-center justify-center gap-3 hover:bg-green-800 transition-colors shadow-lg">
+                <i class="fa-brands fa-pix"></i> GERAR PIX
+            </button>
+            <p class="text-xs text-center text-slate-400 mt-3">Pagamento 100% seguro via Mercado Pago</p>
+        </div>
+
+        <div id="pix-qr-area" class="hidden px-6 py-6 text-center">
+            <div class="mb-4">
+                <i class="fa-brands fa-pix text-5xl text-primary mb-2"></i>
+                <h3 class="text-xl font-bold text-slate-800">Escaneie o QR Code</h3>
+                <p class="text-slate-500 text-sm mt-1">Abra seu banco e conclua o pagamento</p>
+            </div>
+            <img id="pix-qr-img" src="" alt="QR Code PIX"
+                 class="mx-auto w-52 h-52 rounded-xl border-4 border-primary shadow-lg mb-5">
+            <div class="bg-slate-100 rounded-xl p-4">
+                <p class="text-xs text-slate-500 font-bold uppercase tracking-wide mb-2">Copia e Cola</p>
+                <p id="pix-copia-cola" class="text-xs text-slate-700 break-all font-mono leading-relaxed"></p>
+                <button onclick="copiarPixCode()"
+                        class="mt-3 text-sm font-bold text-primary hover:underline flex items-center gap-1 mx-auto">
+                    <i class="fa-regular fa-copy"></i> Copiar código
+                </button>
+            </div>
+            <p class="text-xs text-slate-400 mt-4">Após o pagamento, apresente o comprovante na entrada.</p>
+        </div>
+    </div>
+</div>
+
+<section id="inicio" class="relative h-[90vh] flex items-center justify-center pt-16">
+    <img src="index.jpg" class="absolute inset-0 w-full h-full object-cover" alt="Pesqueiro Capela">
+    <div class="absolute inset-0 hero-gradient"></div>
+    <div class="relative z-10 text-center px-4 max-w-4xl">
+        <h1 class="text-4xl md:text-6xl font-headline text-white mb-6 leading-tight">
+            Ambiente simples, natureza e comida bem feita.
+        </h1>
+        <p class="text-xl md:text-2xl text-emerald-50 mb-8 font-medium italic">
+            "É aquele lugar pra você vir, sentar tranquilo e aproveitar. Sem frescura. Só o que funciona."
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="https://wa.me/5519992655756" class="bg-white/20 border-2 border-white text-white py-4 px-6 text-lg font-bold rounded-md shadow-xl flex items-center justify-center gap-3 hover:bg-white/30 transition-all">
+                <i class="fa-brands fa-whatsapp text-2xl"></i> FALAR COM O PESQUEIRO
+            </a>
+            <button id="btn-comprar-ingresso"
+                    @click="$dispatch('abrir-eventos'); document.getElementById('espaco').scrollIntoView({behavior: 'smooth'})"
+                    class="bg-secondary text-white py-4 px-8 text-xl font-bold rounded-md shadow-xl flex items-center justify-center gap-3 hover:bg-orange-700 transition-transform hover:scale-105">
+                <i class="fa-solid fa-ticket text-2xl"></i> COMPRAR INGRESSO
+            </button>
+        </div>
+    </div>
+</section>
+
+<section id="espaco" class="py-16 bg-white" x-data="{ tab: 'espaco' }" @abrir-eventos.window="tab = 'eventos'">
+    <div class="max-w-7xl mx-auto px-4">
+        
+        <div class="flex flex-wrap justify-center gap-3 mb-12">
+            <button @click="tab = 'espaco'" :class="tab === 'espaco' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600'" class="px-6 py-3 rounded-full font-bold transition-all shadow-sm text-sm md:text-base">NOSSO ESPAÇO</button>
+            <button @click="tab = 'restaurante'" :class="tab === 'restaurante' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600'" class="px-6 py-3 rounded-full font-bold transition-all shadow-sm text-sm md:text-base">RESTAURANTE</button>
+            <button @click="tab = 'regras'" :class="tab === 'regras' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600'" class="px-6 py-3 rounded-full font-bold transition-all shadow-sm text-sm md:text-base">REGRAS DO LUGAR</button>
+            <button @click="tab = 'eventos'" :class="tab === 'eventos' ? 'bg-secondary text-white ring-4 ring-orange-200' : 'bg-slate-100 text-slate-600 border border-secondary/30'" class="px-6 py-3 rounded-full font-bold transition-all shadow-sm text-sm md:text-base flex items-center gap-2">
+                <i class="fa-solid fa-fire" x-show="tab !== 'eventos'"></i>
+                EVENTO DA SEMANA
+            </button>
+        </div>
+
+        <div x-show="tab === 'espaco'" x-cloak class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="rounded-xl overflow-hidden shadow-lg group border border-slate-100">
+                <img src="deck.jpg" class="w-full h-64 object-cover group-hover:scale-105 transition-transform" alt="Nosso Deck">
+                <div class="p-5 bg-white">
+                    <p class="font-bold text-xl text-primary mb-1">Deck de Pesca</p>
+                    <p class="text-sm font-bold text-secondary bg-orange-50 inline-block px-2 py-1 rounded border border-orange-100">Espaço para churrasqueira - R$ 200</p>
+                </div>
+            </div>
+            <div class="rounded-xl overflow-hidden shadow-lg group border border-slate-100">
+                <img src="aconchegante.jpg" class="w-full h-64 object-cover group-hover:scale-105 transition-transform" alt="Ambiente">
+                <div class="p-5 bg-white">
+                    <p class="font-bold text-xl text-primary mb-1">Ambiente Familiar</p>
+                    <p class="text-sm font-bold text-secondary bg-orange-50 inline-block px-2 py-1 rounded border border-orange-100">Espaço para churrasqueira - R$ 200</p>
+                </div>
+            </div>
+            <div class="rounded-xl overflow-hidden shadow-lg group border border-slate-100">
+                <img src="estacionamento.jpg" class="w-full h-64 object-cover group-hover:scale-105 transition-transform" alt="Estacionamento">
+                <div class="p-5 bg-white">
+                    <p class="font-bold text-xl text-primary mb-1">Estacionamento Amplo</p>
+                    <p class="text-sm text-slate-500 font-medium">Segurança e comodidade</p>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="tab === 'restaurante'" x-cloak class="max-w-4xl mx-auto">
+            <div class="bg-emerald-50 p-8 rounded-2xl border-2 border-primary/20 mb-8 text-center">
+                <h2 class="text-3xl font-headline text-primary mb-4">Comida Caipira de Verdade</h2>
+                <p class="text-lg text-slate-700">Nada de pratos elaborados demais. Aqui o tempero é caseiro, o peixe é fresco e a porção é farta.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <img src="cardapio1.jpg" class="rounded-lg shadow-md border object-cover w-full" alt="Cardápio 1">
+                <img src="cardapio2.jpg" class="rounded-lg shadow-md border object-cover w-full" alt="Cardápio 2">
+            </div>
+        </div>
+
+        <div x-show="tab === 'regras'" x-cloak class="max-w-3xl mx-auto">
+            <div class="bg-white p-8 rounded-2xl shadow-xl border-l-8 border-secondary">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 uppercase tracking-tight">Regras do Nosso Espaço</h2>
+                <ul class="space-y-6">
+                    <li class="flex items-start gap-4">
+                        <span class="material-symbols-outlined text-red-600 font-bold text-3xl">cancel</span>
+                        <div>
+                            <p class="text-xl font-bold text-red-700">PROIBIDA ENTRADA DE BEBIDAS</p>
+                            <p class="text-slate-600 text-lg">Não aceitamos cooler ou entrada de bebidas de qualquer tipo.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <span class="material-symbols-outlined text-green-600 font-bold text-3xl">check_circle</span>
+                        <div>
+                            <p class="text-xl font-bold text-green-700">CARNES LIBERADAS</p>
+                            <p class="text-slate-600 text-lg">Pode trazer sua carne para o churrasco à vontade.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <span class="material-symbols-outlined text-primary font-bold text-3xl">info</span>
+                        <div>
+                            <p class="text-xl font-bold text-primary">ALUGUEL DE QUIOSQUE</p>
+                            <p class="text-slate-600 text-lg">Valor único de R$ 200,00 pelo aluguel da churrasqueira/quiosque.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div x-show="tab === 'eventos'" x-cloak class="max-w-3xl mx-auto" x-data="googleSheetsEvent()" x-init="fetchEvent()">
+            
+            <template x-if="loading">
+                <div class="animate-pulse bg-slate-100 h-96 rounded-3xl border-2 border-slate-200 flex items-center justify-center">
+                    <div class="text-slate-400 font-bold">Verificando eventos da semana...</div>
+                </div>
+            </template>
+
+            <template x-if="!loading && hasEvent">
+                <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-secondary relative">
+                    <div class="bg-secondary text-white text-center py-2 font-black uppercase tracking-widest text-sm">
+                        🔥 Evento Confirmado Nesta Semana
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2">
+                        <div class="bg-slate-200 h-64 md:h-auto relative">
+                            <img :src="eventData.imagem" class="w-full h-full object-cover" alt="Banner do Evento">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                                <h3 class="text-3xl font-headline text-white leading-tight" x-text="eventData.titulo"></h3>
+                            </div>
+                        </div>
+                        
+                        <div class="p-8 flex flex-col justify-center">
+                            <p class="text-slate-600 text-lg mb-6 leading-relaxed" x-text="eventData.descricao"></p>
+                            
+                            <div class="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6 text-center">
+                                <p class="text-sm text-secondary font-bold uppercase mb-1">Preço no Dia: R$ <span x-text="eventData.precoDia"></span></p>
+                                <p class="text-slate-800 text-sm font-bold">Comprando antecipado pelo Pix:</p>
+                                <p class="text-4xl font-black text-primary mt-1">R$ <span x-text="eventData.precoPix"></span></p>
+                            </div>
+                            
+                            <button @click="abrirCheckout(
+                                        eventData.titulo,
+                                        parseFloat(eventData.precoPix.replace(',', '.')),
+                                        'Ingresso Evento: ' + eventData.titulo
+                                    )"
+                                    class="w-full bg-primary text-white text-center py-4 rounded-xl font-bold text-lg hover:bg-green-800 transition-colors shadow-lg flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-pix"></i> GARANTIR DESCONTO VIA PIX
+                            </button>
+                            <p class="text-xs text-center text-slate-500 mt-3 font-medium">* Vagas limitadas. O pagamento garante sua reserva.</p>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <template x-if="!loading && !hasEvent">
+                <div class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-3xl p-12 text-center">
+                    <i class="fa-regular fa-calendar-xmark text-6xl text-slate-300 mb-4"></i>
+                    <h3 class="text-2xl font-bold text-slate-700 mb-2">Sem eventos especiais nesta semana</h3>
+                    <p class="text-slate-500 text-lg">Nosso restaurante e pesqueiro funcionam normalmente. Venha nos visitar!</p>
+                </div>
+            </template>
+        </div>
+
+    </div>
+</section>
+
+<section id="precos" class="py-16 bg-slate-100 border-y border-slate-200">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl md:text-5xl font-headline text-primary mb-4">Nossos Lagos e Preços</h2>
+            <p class="text-xl text-slate-600">Escolha o seu estilo de pescaria. Temos dois lagos preparados para você.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            
+            <div class="bg-white rounded-2xl p-8 md:p-10 border-2 border-primary shadow-xl relative overflow-hidden flex flex-col">
+                <div class="flex-grow">
+                    <h3 class="text-3xl font-bold text-primary mb-4 flex items-center gap-3">
+                        <i class="fa-solid fa-scale-balanced text-secondary"></i> Pesca por Quilo
+                    </h3>
+                    <p class="text-slate-600 mb-6 text-lg">Ideal para quem quer se divertir e garantir o peixe fresco para levar pra casa.</p>
+
+                    <div class="space-y-3 mb-8">
+                        <div class="bg-orange-50 border-2 border-secondary rounded-xl p-5 text-center">
+                            <p class="text-sm text-secondary uppercase font-black tracking-widest mb-1">Taxa de Entrada</p>
+                            <p class="text-5xl font-extrabold text-slate-800">R$ 25,00<span class="text-xl text-slate-500 font-medium"> /pessoa</span></p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 text-center">
+                            <p class="text-sm text-slate-500 uppercase font-bold tracking-widest mb-1">Quilo do Peixe</p>
+                            <p class="text-5xl font-extrabold text-slate-800">R$ 25,00<span class="text-xl text-slate-500 font-medium"> /kg</span></p>
+                        </div>
+                    </div>
+
+                    <ul class="space-y-4 text-lg font-bold text-slate-700 mb-8">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-600 text-xl"></i> Entrada obrigatória: R$ 25,00/pessoa</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-600 text-xl"></i> Pague R$ 25,00 por quilo pescado</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-600 text-xl"></i> Leve o que pescar para casa</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-primary text-white rounded-2xl p-8 md:p-10 shadow-2xl relative flex flex-col transform md:-translate-y-2">
+                <div class="flex-grow">
+                    <h3 class="text-3xl font-bold mb-4 flex items-center gap-3">
+                        <i class="fa-solid fa-fish-fins text-secondary"></i> Pesca Esportiva
+                    </h3>
+                    <p class="text-emerald-100 mb-8 text-lg">Para os amantes do esporte. Engate os gigantes, tire a foto e devolva para a água.</p>
+                    
+                    <div class="bg-emerald-800/50 p-6 rounded-xl border border-emerald-700 mb-8 text-center">
+                        <p class="text-sm text-emerald-200 uppercase font-bold tracking-widest mb-1">Entrada única todas as idades</p>
+                        <p class="text-5xl font-extrabold text-white">R$ 50,00<span class="text-2xl text-emerald-300 font-medium"> /pessoa</span></p>
+                    </div>
+                    
+                    <ul class="space-y-4 text-lg font-bold text-emerald-50 mb-8">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-secondary text-xl"></i> Acesso exclusivo ao lago esportivo</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-secondary text-xl"></i> Modalidade Pesque e Solte</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section id="cardapio" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-4xl font-headline text-center text-primary mb-12">Nosso Cardápio</h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- COLUNA 1: REFEIÇÕES E SALADAS -->
+            <div class="space-y-8">
+                <!-- PRATOS INDIVIDUAIS -->
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 shadow-sm">
+                    <h3 class="text-2xl font-bold text-secondary border-b-2 border-secondary mb-4 pb-2 uppercase">Pratos Individuais (Terça a Sexta)</h3>
+                    <div class="space-y-3 text-lg">
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Filé de Frango Grelhado</span> <span class="font-bold">R$ 36,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Filé de Frango Empanado</span> <span class="font-bold">R$ 36,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Frango à Parmegiana</span> <span class="font-bold">R$ 42,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Tilápia Empanada</span> <span class="font-bold">R$ 39,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Tilápia à Parmegiana</span> <span class="font-bold">R$ 45,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Contra-filé Acebolado</span> <span class="font-bold">R$ 42,90</span></div>
+                    </div>
+                    <p class="text-sm mt-4 text-slate-500 font-bold">*Acompanhamentos conforme descrição do prato (Arroz, Feijão, Fritas/Farofa).</p>
+                </div>
+
+                <!-- SALADAS -->
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 shadow-sm">
+                    <h3 class="text-2xl font-bold text-secondary border-b-2 border-secondary mb-4 pb-2 uppercase">Saladas</h3>
+                    <div class="space-y-4 text-lg">
+                        <div class="border-b border-slate-200 pb-2">
+                            <div class="flex justify-between font-bold"><span>Salada Mista</span> <span>R$ 29,90</span></div>
+                            <p class="text-sm text-slate-500 font-medium">Alface, rúcula, tomate, cebola, molho da casa</p>
+                        </div>
+                        <div class="border-b border-slate-200 pb-2">
+                            <div class="flex justify-between font-bold"><span>Salada Completa</span> <span>R$ 49,90</span></div>
+                            <p class="text-sm text-slate-500 font-medium">Alface, rúcula, tomate, cebola, palmito, azeitonas, molho da casa</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FINAIS DE SEMANA E FERIADOS -->
+                <div class="bg-primary text-white p-6 rounded-xl shadow-lg border-t-8 border-secondary">
+                    <h3 class="text-2xl font-bold mb-2 uppercase">Pratos 2 Pessoas (Finais de Semana e Feriados)</h3>
+                    <div class="space-y-3 text-lg">
+                        <div class="flex justify-between border-b border-emerald-700 pb-1"><span>Filé de Frango Grelhado</span> <span class="font-bold">R$ 89,90</span></div>
+                        <div class="flex justify-between border-b border-emerald-700 pb-1"><span>Filé de Frango Empanado</span> <span class="font-bold">R$ 89,90</span></div>
+                        <div class="flex justify-between border-b border-emerald-700 pb-1"><span>Frango à Parmegiana</span> <span class="font-bold">R$ 99,90</span></div>
+                        <div class="flex justify-between border-b border-emerald-700 pb-1"><span>Tilápia Empanada</span> <span class="font-bold">R$ 99,90</span></div>
+                        <div class="flex justify-between border-b border-emerald-700 pb-1"><span>Tilápia à Parmegiana</span> <span class="font-bold">R$ 109,90</span></div>
+                        <div class="flex justify-between border-b border-emerald-700 pb-1"><span>Contra-filé Acebolado</span> <span class="font-bold">R$ 109,90</span></div>
+                    </div>
+                </div>
+
+                <!-- PRATOS KIDS -->
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 shadow-sm">
+                    <h3 class="text-2xl font-bold text-secondary border-b-2 border-secondary mb-4 pb-2 uppercase">Pratos Kids</h3>
+                    <div class="space-y-3 text-lg">
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Iscas de Frango Empanado (Arroz e Fritas)</span> <span class="font-bold">R$ 29,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Iscas de Contra-filé Grelhado (Arroz e Fritas)</span> <span class="font-bold">R$ 31,90</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUNA 2: PORÇÕES E BEBIDAS -->
+            <div class="space-y-8">
+                <!-- PORÇÕES -->
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 shadow-sm">
+                    <h3 class="text-2xl font-bold text-secondary border-b-2 border-secondary mb-4 pb-2 uppercase">Porções</h3>
+                    <div class="space-y-2 text-lg">
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Bolinho de Bacalhau</span> <span class="font-bold">R$ 59,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Tilápia</span> <span class="font-bold">R$ 58,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Costelinha de Pacu</span> <span class="font-bold">R$ 58,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Ceviche</span> <span class="font-bold">R$ 45,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Lambari</span> <span class="font-bold">R$ 45,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Manjubinha</span> <span class="font-bold">R$ 45,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Sardinha</span> <span class="font-bold">R$ 45,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Frango Passarinho</span> <span class="font-bold">R$ 45,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Mandioca</span> <span class="font-bold">R$ 35,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Polenta</span> <span class="font-bold">R$ 35,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Fritas</span> <span class="font-bold">R$ 35,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Anéis de Cebola</span> <span class="font-bold">R$ 35,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Azeitonas</span> <span class="font-bold">R$ 19,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Arroz</span> <span class="font-bold">R$ 15,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Farofa</span> <span class="font-bold">R$ 15,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Feijão</span> <span class="font-bold">R$ 10,90</span></div>
+                    </div>
+                </div>
+
+                <!-- BEBIDAS E CERVEJAS -->
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 shadow-sm">
+                    <h3 class="text-2xl font-bold text-secondary border-b-2 border-secondary mb-4 pb-2 uppercase">Bebidas & Cervejas</h3>
+                    <div class="space-y-2 text-lg">
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Água 500ml (Sem Gás / Com Gás)</span> <span class="font-bold">R$ 5,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Refrigerante</span> <span class="font-bold">R$ 7,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Suco Del Valle Lata</span> <span class="font-bold">R$ 8,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>H2O 500ml</span> <span class="font-bold">R$ 8,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Energético</span> <span class="font-bold">R$ 11,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Heineken 600ml</span> <span class="font-bold">R$ 18,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Original 600ml</span> <span class="font-bold">R$ 17,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Brahma / Skol / Amstel 600ml</span> <span class="font-bold">R$ 15,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Original / Amstel Lata</span> <span class="font-bold">R$ 6,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Heineken Lata</span> <span class="font-bold">R$ 8,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Brahma Garrafa 300ml</span> <span class="font-bold">R$ 6,00</span></div>
+                    </div>
+                </div>
+
+                <!-- DESTILADOS -->
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 shadow-sm">
+                    <h3 class="text-2xl font-bold text-secondary border-b-2 border-secondary mb-4 pb-2 uppercase">Destilados</h3>
+                    <div class="space-y-2 text-lg">
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Caipirinha Cachaça (Limão/Maracujá/Rúcula)</span> <span class="font-bold">R$ 25,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Caipirinha Vodka</span> <span class="font-bold">R$ 31,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Gin Tônica / Tropical</span> <span class="font-bold">R$ 35,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Smirnoff Ice</span> <span class="font-bold">R$ 12,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Dose Campari / Vermouth</span> <span class="font-bold">R$ 12,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Dose Conhaque</span> <span class="font-bold">R$ 10,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Dose Whisky</span> <span class="font-bold">R$ 14,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Dose Vinho</span> <span class="font-bold">R$ 8,90</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Dose Cachaça 51 / Velho Barreiro</span> <span class="font-bold">R$ 6,00</span></div>
+                        <div class="flex justify-between border-b border-slate-200 pb-1"><span>Dose Cachaça Ypióca / SF / Seleta / Outras</span> <span class="font-bold">R$ 8,00</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contato" class="py-20 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div>
+            <h2 class="text-4xl font-headline text-primary mb-8">Como Chegar</h2>
+            <div class="space-y-6">
+                <div class="flex items-start gap-4">
+                    <span class="material-symbols-outlined text-secondary text-4xl">location_on</span>
+                    <p class="text-xl">Estrada municipal dos Aveiros,<br>Pesqueiro Capela<br>Campinas - SP</p>
+                </div>
+                <div class="flex items-start gap-4">
+                    <span class="material-symbols-outlined text-secondary text-4xl">phone_iphone</span>
+                    <p class="text-xl font-bold">+55 19 99265-5756</p>
+                </div>
+                <a href="https://maps.google.com/?q=Rua+Manoel+Aveio+Campinas+13060-276" class="inline-block border-2 border-primary text-primary font-bold py-4 px-8 rounded-md hover:bg-primary hover:text-white transition-all uppercase text-lg mt-4">
+                    <i class="fa-solid fa-location-dot mr-2"></i> ABRIR NO GOOGLE MAPS
+                </a>
+            </div>
+        </div>
+        <div class="h-96 rounded-2xl overflow-hidden shadow-xl border-4 border-white">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3674.316812838421!2d-47.0347318!3d-22.9385619!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94c8cd05f963870b%3A0xc07c4c36056d6837!2sR.+Manoel+Aveio+-+Campinas%2C+SP%2C+13060-276!5e0!3m2!1spt-BR!2sbr!4v1713700000000!5m2!1spt-BR!2sbr" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-slate-900 text-slate-400 py-12">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase tracking-widest">Pesqueiro Capela</h4>
+                <p class="text-base">Ambiente simples, natureza e comida boa. O lugar da sua família.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase tracking-widest">Contato</h4>
+                <p class="text-base">(19) 99265-5756</p>
+                <p class="text-base">contato@pesqueirocapela.com.br</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase tracking-widest">Horário</h4>
+                <p class="text-base font-bold text-white">Terça a Domingo</p>
+                <p class="text-base">08h às 18h</p>
+            </div>
+            <div class="flex items-center lg:justify-end gap-4">
+                <a href="https://www.instagram.com/pesqueiro.capela" class="hover:text-white transition-colors text-3xl"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://wa.me/5519992655756" class="hover:text-white transition-colors text-3xl"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+        </div>
+        <div class="pt-8 border-t border-slate-800 text-center text-sm">
+            <p>© 2026 Pesqueiro Capela. Desenvolvido por <span class="text-emerald-500 font-bold">Impulso Digital</span></p>
+        </div>
+    </div>
+</footer>
+
+<a href="https://wa.me/5519992655756" class="fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform z-[100]">
+    <i class="fa-brands fa-whatsapp text-4xl"></i>
+</a>
+
+<script>
+function googleSheetsEvent() {
+    return {
+        loading: true,
+        hasEvent: false,
+        eventData: null,
+        sheetUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7XwHTbKgE5L-2i9XOPSyGKrGsGkNUCzWZa-q2jftgGG-jR6jKb9STjdr3eQXBE5ZiqaToleDPHNro/pub?output=csv',
+        async fetchEvent() {
+            try {
+                if (!this.sheetUrl || this.sheetUrl.trim() === '') {
+                    this.loadDemoData();
+                    return;
+                }
+                const response = await fetch(this.sheetUrl);
+                const csvText = await response.text();
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: (results) => {
+                        const row = results.data[0];
+                        if (row && row.Ativo && row.Ativo.toUpperCase().trim() === 'SIM') {
+                            this.eventData = {
+                                titulo: row.Titulo,
+                                descricao: row.Descricao,
+                                precoDia: row.PrecoDia,
+                                precoPix: row.PrecoPix,
+                                imagem: row.Imagem
+                            };
+                            this.hasEvent = true;
+                            window.eventoGlobal = this.eventData;
+                        } else {
+                            this.hasEvent = false;
+                        }
+                        this.loading = false;
+                    }
+                });
+            } catch (error) {
+                console.error("Erro ao ler a planilha do Google:", error);
+                this.loadDemoData();
+            }
+        },
+        loadDemoData() {
+            this.eventData = {
+                titulo: 'Costela Fogo de Chão (Demo)',
+                descricao: 'Venha aproveitar nossa tradicional costela assada no fogo de chão com música ao vivo. Ambiente familiar e muita natureza.',
+                precoDia: '60,00',
+                precoPix: '45,00',
+                imagem: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80'
+            };
+            this.hasEvent = true;
+            this.loading = false;
+            window.eventoGlobal = this.eventData;
+        },
+        get whatsappLink() {
+            if(!this.eventData) return '#';
+            const msg = `Olá, gostaria de garantir meu ingresso antecipado via Pix para o evento: ${this.eventData.titulo}!`;
+            return `https://wa.me/5519992655756?text=${encodeURIComponent(msg)}`;
+        }
+    }
+}
+</script>
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('checkoutState', () => ({
+        checkout: {
+            open: false,
+            title: '',
+            price: 0,
+            description: ''
+        },
+        abrirCheckout(title, price, description) {
+            this.checkout.title       = title;
+            this.checkout.price       = price;
+            this.checkout.description = description;
+            this.checkout.open        = true;
+            document.getElementById('pix-form-area').classList.remove('hidden');
+            document.getElementById('pix-qr-area').classList.add('hidden');
+            const btn = document.getElementById('btn-gerar-pix');
+            if (btn) {
+                btn.disabled  = false;
+                btn.innerHTML = '<i class="fa-brands fa-pix"></i> GERAR PIX (R\u0024 '
+                              + price.toFixed(2).replace('.', ',')
+                              + ')';
+            }
+        }
+    }));
+});
+</script>
+
+<script>
+async function gerarPix() {
+    const nome  = document.getElementById('pix-nome').value.trim();
+    const phone = document.getElementById('pix-phone').value.trim();
+    const cpf   = document.getElementById('pix-cpf').value.trim();
+    const state       = Alpine.$data(document.body);
+    const amount      = state && state.checkout ? state.checkout.price       : 25.00;
+    const description = state && state.checkout ? state.checkout.description : 'Ingresso Pesqueiro Capela';
+
+    if (!nome || !phone || !cpf) {
+        alert('Por favor, preencha todos os campos.');
+        return;
+    }
+
+    // LGPD — consentimento obrigatório
+    const lgpdCheckbox = document.getElementById('lgpd_consent');
+    if (!lgpdCheckbox || !lgpdCheckbox.checked) {
+        alert('Você precisa concordar com os termos de armazenamento de dados (LGPD) para continuar.');
+        lgpdCheckbox && lgpdCheckbox.focus();
+        return;
+    }
+
+    const phoneDigits = phone.replace(/\D/g, '');
+    if (phoneDigits.length < 10 || phoneDigits.length > 11) {
+        alert('Telefone inválido. Informe DDD + número (ex: 19 99999-9999).');
+        return;
+    }
+    if (!/^\d{11}$/.test(cpf)) {
+        alert('CPF inválido. Digite apenas os 11 números, sem pontos ou traços.');
+        return;
+    }
+    if (!amount || amount <= 0) {
+        alert('Valor do ingresso inválido. Feche e tente novamente.');
+        return;
+    }
+
+    const btn = document.getElementById('btn-gerar-pix');
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Gerando PIX...';
+
+    try {
+        const response = await fetch('./gerar_pix.php', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name:        nome,
+                phone:       phone.replace(/\D/g, ''),
+                cpf:         cpf.replace(/\D/g, ''),
+                amount:      amount,
+                description: description
+            })
+        });
+
+        const data = await response.json();
+        if (!response.ok || data.error) {
+            throw new Error(data.message || data.error || 'Erro desconhecido ao gerar o PIX.');
+        }
+        document.getElementById('pix-form-area').classList.add('hidden');
+        document.getElementById('pix-qr-area').classList.remove('hidden');
+        document.getElementById('pix-qr-img').src             = 'data:image/png;base64,' + data.qr_code_base64;
+        document.getElementById('pix-copia-cola').textContent = data.qr_code;
+    } catch (err) {
+        alert('Erro: ' + err.message);
+        btn.disabled  = false;
+        btn.innerHTML = '<i class="fa-brands fa-pix"></i> GERAR PIX';
+    }
+}
+
+function copiarPixCode() {
+    const codigo = document.getElementById('pix-copia-cola').textContent;
+    if (!codigo) return;
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(codigo).then(() => {
+            alert('Código PIX copiado!');
+        }).catch(() => copyFallbackIOS(codigo));
+    } else {
+        copyFallbackIOS(codigo);
+    }
+
+    function copyFallbackIOS(text) {
+        const el = document.createElement('textarea');
+        el.value = text;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+
+        if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            el.setSelectionRange(0, 999999);
+        } else {
+            el.select();
+        }
+
+        try {
+            document.execCommand('copy');
+            alert('Código PIX copiado!');
+        } catch (err) {
+            alert('O seu navegador bloqueou a cópia. Por favor, copie o código manualmente.');
+        }
+        document.body.removeChild(el);
+    }
+}
+</script>
+<script>
+(function () {
+    function aplicarMascaraTelefone() {
+        const input = document.getElementById('pix-phone');
+        if (!input) return;
+
+        input.addEventListener('input', function (e) {
+            let digits = e.target.value.replace(/\D/g, '');
+            if (digits.startsWith('55') && digits.length > 11) {
+                digits = digits.slice(2);
+            }
+            digits = digits.slice(0, 11);
+            let formatted = digits;
+            if (digits.length > 10) {
+                formatted = '(' + digits.slice(0, 2) + ') ' + digits.slice(2, 7) + '-' + digits.slice(7);
+            } else if (digits.length > 6) {
+                formatted = '(' + digits.slice(0, 2) + ') ' + digits.slice(2, 6) + '-' + digits.slice(6);
+            } else if (digits.length > 2) {
+                formatted = '(' + digits.slice(0, 2) + ') ' + digits.slice(2);
+            } else if (digits.length > 0) {
+                formatted = '(' + digits;
+            }
+            e.target.value = formatted;
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', aplicarMascaraTelefone);
+    } else {
+        aplicarMascaraTelefone();
+    }
+}());
+</script>
+</body>
+</html>
